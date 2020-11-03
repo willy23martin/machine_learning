@@ -82,4 +82,7 @@ concat(n$humidity[2], n$metrics[2])
 f <- factor(c("H", "F", "I", "M"))
 f
 as.character(f)
+<<<<<<< HEAD
 rm(y)
+=======
+>>>>>>> 527e7b5deeb95c57aa766dfee51174960a49a6bf
