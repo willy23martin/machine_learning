@@ -17,7 +17,41 @@ BER_data_frame$Capacity <- NULL
 subset(BER_data_frame, Rb>7*10^6)
 head(BER_data_frame)
 tail(BER_data_frame)
+subset(BER_data_frame, Rb>7*10^6 & BER>0)
 
 # Summary:
 summary(BER_data_frame)
 unique(BER_data_frame$BER)
+length(unique(BER_data_frame$Rb))
+
+# Sort:
+BER_data_frame[order(BER_data_frame$BER),]
+BER_data_frame[order(-BER_data_frame$BER),]
+
+# Add columns:
+BER_data_frame$Capacity <- ifelse(BER_data_frame$BER>0 & BER_data_frame$Rb>0, NA, NULL)
+BER_data_frame$BitsError<-NULL
+BER_data_frame$ServiceTimeSec <- 7200
+BER_data_frame$BitsError <- BER_data_frame$BER * BER_data_frame$Rb * BER_data_frame$ServiceTimeSec
+BER_data_frame$Capacity<-BER_data_frame$Rb * 1.4
+
+# Delete rows:
+BER_data_frame <- BER_data_frame[-c(8)]
+
+# Join Dataframes:
+PARAMS <- data.frame(
+  Rb = c(3000000, 4000000, 5000000, 6000000, 7000000, 8000000, 9000000),
+  BW = c(8*10^6, 8*10^6,8*10^6,8*10^6,8*10^6,8*10^6,8*10^6)
+)
+BER_data_frame <- merge(BER_data_frame, PARAMS, by="Rb")
+
+SNRs <- data.frame(
+  SNR = c(NA,NA,NA,NA,NA,NA,NA)
+)
+
+BER_data_frame<- cbind(BER_data_frame, SNRs)
+# rbind(): add rows to dataframe
+
+# Aggregates (Group by):
+aggregate(BER ~ Rb, BER_data_frame, mean)
+aggregate(BER ~ Capacity, BER_data_frame, max)
